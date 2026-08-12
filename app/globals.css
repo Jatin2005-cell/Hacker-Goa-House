@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background: #fbf3e1;
+  color: #14231e;
+}
+
+.dot-grid {
+  background-image: radial-gradient(#0e4c4322 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.washi {
+  background: repeating-linear-gradient(
+    45deg,
+    #ff5a6e 0px,
+    #ff5a6e 8px,
+    #ffc23c 8px,
+    #ffc23c 16px
+  );
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+  50% { transform: translateY(-6px) rotate(var(--r, 0deg)); }
+}
+
+.float {
+  animation: floaty 4.5s ease-in-out infinite;
+}
+
+::selection {
+  background: #ffc23c;
+  color: #08312b;
+}
