@@ -129,7 +129,7 @@ export default function BuilderCard() {
             onChange={(e) => setName(e.target.value)}
             maxLength={28}
             placeholder="Enter Name"
-            className="w-full rounded-xl border-2 border-teal/30 bg-white px-4 py-3 font-body focus:outline-none focus:border-coral"
+            className="w-full rounded-xl border-2 text-black border-teal/30 bg-white px-4 py-3 font-body focus:outline-none focus:border-coral"
           />
         </div>
 
@@ -140,7 +140,7 @@ export default function BuilderCard() {
             onChange={(e) => setRole(e.target.value)}
             maxLength={28}
             placeholder="Enter Role "
-            className="w-full rounded-xl border-2 border-teal/30 bg-white px-4 py-3 font-body focus:outline-none focus:border-coral"
+            className="w-full rounded-xl border-2 text-black border-teal/30 bg-white px-4 py-3 font-body focus:outline-none focus:border-coral"
           />
         </div>
 
