@@ -416,41 +416,52 @@ function drawBackground(
 
   /*
    * Outer border
+   * CHANGED TO GOLDEN
    */
-  ctx.strokeStyle =
-    COLORS.teal;
+ /*
+ * Outer golden border with broad shadow
+ */
+ctx.save();
 
-  ctx.lineWidth = 8;
+ctx.shadowColor = 'rgba(255,194,60,0.55)';
+ctx.shadowBlur = 28;
+ctx.shadowOffsetX = 0;
+ctx.shadowOffsetY = 0;
 
-  roundRect(
-    ctx,
-    18,
-    18,
-    CARD_WIDTH - 36,
-    CARD_HEIGHT - 36,
-    38
-  );
+ctx.strokeStyle = COLORS.mango;
+ctx.lineWidth = 14;
 
-  ctx.stroke();
+roundRect(
+  ctx,
+  18,
+  18,
+  CARD_WIDTH - 36,
+  CARD_HEIGHT - 36,
+  38
+);
 
-  /*
-   * Inner border
-   */
-  ctx.strokeStyle =
-    'rgba(14,76,67,0.35)';
+ctx.stroke();
 
-  ctx.lineWidth = 2;
+ctx.restore();
 
-  roundRect(
-    ctx,
-    38,
-    38,
-    CARD_WIDTH - 76,
-    CARD_HEIGHT - 76,
-    28
-  );
+/*
+ * Inner border
+ */
+ctx.strokeStyle =
+  'rgba(14,76,67,0.35)';
 
-  ctx.stroke();
+ctx.lineWidth = 2;
+
+roundRect(
+  ctx,
+  38,
+  38,
+  CARD_WIDTH - 76,
+  CARD_HEIGHT - 76,
+  28
+);
+
+ctx.stroke();
 }
 
 /* ================================================== */
@@ -1114,7 +1125,7 @@ function drawTaglinesAndIcons(
     '#TESTER',
     '✓',
     155,
-    720, // moved down
+    720,
     COLORS.coral
   );
 
@@ -1132,7 +1143,7 @@ function drawTaglinesAndIcons(
     '#CREATOR',
     '✦',
     CARD_WIDTH - 155,
-    720, // moved down
+    720,
     COLORS.coral
   );
 }
@@ -2028,20 +2039,33 @@ export async function drawBuilderCard(
 
   /*
    * 9. FINAL BORDER
+   * CHANGED TO GOLDEN
    */
-  ctx.strokeStyle =
-    COLORS.teal;
+  /*
+ * 9. FINAL GOLDEN BORDER
+ */
+ctx.save();
 
-  ctx.lineWidth = 8;
+ctx.shadowColor = 'rgba(255,194,60,0.60)';
+ctx.shadowBlur = 30;
+ctx.shadowOffsetX = 0;
+ctx.shadowOffsetY = 0;
 
-  roundRect(
-    ctx,
-    18,
-    18,
-    CARD_WIDTH - 36,
-    CARD_HEIGHT - 36,
-    38
-  );
+ctx.strokeStyle =
+  COLORS.mango;
 
-  ctx.stroke();
+ctx.lineWidth = 14;
+
+roundRect(
+  ctx,
+  18,
+  18,
+  CARD_WIDTH - 36,
+  CARD_HEIGHT - 36,
+  38
+);
+
+ctx.stroke();
+
+ctx.restore();
 }
