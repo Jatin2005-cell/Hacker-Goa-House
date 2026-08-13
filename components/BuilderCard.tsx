@@ -107,7 +107,7 @@ export default function BuilderCard() {
     <div className="grid gap-10 lg:grid-cols-[420px_1fr] items-start">
       <section className="space-y-5">
         <div>
-          <label className="block font-body font-semibold text-teal mb-2">Your photo</label>
+          <label className="text-[#FFC23C] font-bold">Your photo</label>
           <label className="flex items-center justify-center gap-3 border-2 border-dashed border-teal/40 rounded-2xl px-4 py-6 cursor-pointer bg-white/60 hover:bg-white transition">
             <input
               type="file"
@@ -123,23 +123,23 @@ export default function BuilderCard() {
         </div>
 
         <div>
-          <label className="block font-body font-semibold text-teal mb-2">Name</label>
+          
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={28}
-            placeholder="Madhavan Singh"
+            placeholder="Enter Name"
             className="w-full rounded-xl border-2 border-teal/30 bg-white px-4 py-3 font-body focus:outline-none focus:border-coral"
           />
         </div>
 
         <div>
-          <label className="block font-body font-semibold text-teal mb-2">Stack / role</label>
+          
           <input
             value={role}
             onChange={(e) => setRole(e.target.value)}
             maxLength={28}
-            placeholder="Full Stack Developer"
+            placeholder="Enter Role "
             className="w-full rounded-xl border-2 border-teal/30 bg-white px-4 py-3 font-body focus:outline-none focus:border-coral"
           />
         </div>
@@ -176,7 +176,7 @@ export default function BuilderCard() {
           </button>
         </div>
         {shareError && <p className="text-coral text-sm">{shareError}</p>}
-        <p className="text-xs text-ink/50 font-body">
+        <p className="text-xs text-white font-body">
           No login needed. Your photo is only used to render the image in your browser.
         </p>
       </section>

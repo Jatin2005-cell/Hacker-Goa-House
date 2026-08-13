@@ -26,9 +26,9 @@ export interface CardData {
 
 type LoadedImage = HTMLImageElement | ImageBitmap;
 
-/* -------------------------------------------------- */
+/* ================================================== */
 /* BASIC HELPERS                                      */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -81,9 +81,9 @@ function line(
   ctx.stroke();
 }
 
-/* -------------------------------------------------- */
-/* IMAGE LOADER                                       */
-/* -------------------------------------------------- */
+/* ================================================== */
+/* IMAGE LOADING                                      */
+/* ================================================== */
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -101,7 +101,6 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 async function loadCardAssets() {
   const assets = {
     background: null as LoadedImage | null,
-    indiaGate: null as LoadedImage | null,
     hackerHouse: null as LoadedImage | null,
     goaLogo: null as LoadedImage | null,
     pm247: null as LoadedImage | null,
@@ -109,7 +108,6 @@ async function loadCardAssets() {
 
   const results = await Promise.allSettled([
     loadImage('/card-assets/background.png'),
-    loadImage('/card-assets/india-gate.webp'),
     loadImage('/card-assets/hacker-house.png'),
     loadImage('/card-assets/goa_hindi.svg'),
     loadImage('/card-assets/2-47.svg'),
@@ -120,27 +118,23 @@ async function loadCardAssets() {
   }
 
   if (results[1].status === 'fulfilled') {
-    assets.indiaGate = results[1].value;
+    assets.hackerHouse = results[1].value;
   }
 
   if (results[2].status === 'fulfilled') {
-    assets.hackerHouse = results[2].value;
+    assets.goaLogo = results[2].value;
   }
 
   if (results[3].status === 'fulfilled') {
-    assets.goaLogo = results[3].value;
-  }
-
-  if (results[4].status === 'fulfilled') {
-    assets.pm247 = results[4].value;
+    assets.pm247 = results[3].value;
   }
 
   return assets;
 }
 
-/* -------------------------------------------------- */
+/* ================================================== */
 /* IMAGE HELPERS                                      */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 function drawImageContain(
   ctx: CanvasRenderingContext2D,
@@ -206,9 +200,9 @@ function drawImageCover(
   ctx.restore();
 }
 
-/* -------------------------------------------------- */
+/* ================================================== */
 /* BACKGROUND                                         */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 function drawBackground(
   ctx: CanvasRenderingContext2D,
@@ -226,8 +220,7 @@ function drawBackground(
   if (background) {
     ctx.save();
 
-    ctx.globalAlpha = 0.62;
-
+    ctx.globalAlpha = 0.68;
     ctx.filter = 'blur(0.8px)';
 
     drawImageCover(
@@ -243,35 +236,34 @@ function drawBackground(
 
     ctx.save();
 
-    const darkOverlay =
-      ctx.createLinearGradient(
-        0,
-        0,
-        0,
-        CARD_HEIGHT
-      );
-
-    darkOverlay.addColorStop(
+    const overlay = ctx.createLinearGradient(
       0,
-      'rgba(6,53,47,0.24)'
+      0,
+      0,
+      CARD_HEIGHT
     );
 
-    darkOverlay.addColorStop(
+    overlay.addColorStop(
+      0,
+      'rgba(6,53,47,0.18)'
+    );
+
+    overlay.addColorStop(
       0.35,
-      'rgba(6,53,47,0.16)'
+      'rgba(6,53,47,0.08)'
     );
 
-    darkOverlay.addColorStop(
-      0.65,
-      'rgba(6,53,47,0.12)'
+    overlay.addColorStop(
+      0.7,
+      'rgba(6,53,47,0.06)'
     );
 
-    darkOverlay.addColorStop(
+    overlay.addColorStop(
       1,
-      'rgba(6,53,47,0.28)'
+      'rgba(6,53,47,0.20)'
     );
 
-    ctx.fillStyle = darkOverlay;
+    ctx.fillStyle = overlay;
 
     ctx.fillRect(
       0,
@@ -294,7 +286,7 @@ function drawBackground(
 
     readability.addColorStop(
       0,
-      'rgba(251,243,225,0.08)'
+      'rgba(251,243,225,0.10)'
     );
 
     readability.addColorStop(
@@ -304,12 +296,12 @@ function drawBackground(
 
     readability.addColorStop(
       0.75,
-      'rgba(251,243,225,0.04)'
+      'rgba(251,243,225,0.03)'
     );
 
     readability.addColorStop(
       1,
-      'rgba(251,243,225,0.10)'
+      'rgba(251,243,225,0.08)'
     );
 
     ctx.fillStyle = readability;
@@ -324,8 +316,11 @@ function drawBackground(
     ctx.restore();
   }
 
+  /*
+   * Fine dot texture
+   */
   ctx.fillStyle =
-    'rgba(14,76,67,0.055)';
+    'rgba(14,76,67,0.045)';
 
   for (
     let y = 30;
@@ -342,7 +337,7 @@ function drawBackground(
       ctx.arc(
         x,
         y,
-        1.3,
+        1.2,
         0,
         Math.PI * 2
       );
@@ -351,10 +346,13 @@ function drawBackground(
     }
   }
 
+  /*
+   * Diagonal paper lines
+   */
   ctx.save();
 
   ctx.strokeStyle =
-    'rgba(14,76,67,0.045)';
+    'rgba(14,76,67,0.035)';
 
   ctx.lineWidth = 2;
 
@@ -365,10 +363,7 @@ function drawBackground(
   ) {
     ctx.beginPath();
 
-    ctx.moveTo(
-      i,
-      0
-    );
+    ctx.moveTo(i, 0);
 
     ctx.lineTo(
       i + CARD_HEIGHT,
@@ -380,10 +375,13 @@ function drawBackground(
 
   ctx.restore();
 
+  /*
+   * Decorative waves
+   */
   ctx.save();
 
   ctx.strokeStyle =
-    'rgba(53,176,160,0.10)';
+    'rgba(53,176,160,0.08)';
 
   ctx.lineWidth = 3;
 
@@ -400,20 +398,14 @@ function drawBackground(
       x += 20
     ) {
       const y =
-        500 +
+        520 +
         i * 28 +
         Math.sin(x / 90 + i) * 18;
 
       if (x === 60) {
-        ctx.moveTo(
-          x,
-          y
-        );
+        ctx.moveTo(x, y);
       } else {
-        ctx.lineTo(
-          x,
-          y
-        );
+        ctx.lineTo(x, y);
       }
     }
 
@@ -422,10 +414,13 @@ function drawBackground(
 
   ctx.restore();
 
+  /*
+   * Outer border
+   */
   ctx.strokeStyle =
     COLORS.teal;
 
-  ctx.lineWidth = 7;
+  ctx.lineWidth = 8;
 
   roundRect(
     ctx,
@@ -438,6 +433,9 @@ function drawBackground(
 
   ctx.stroke();
 
+  /*
+   * Inner border
+   */
   ctx.strokeStyle =
     'rgba(14,76,67,0.35)';
 
@@ -455,9 +453,9 @@ function drawBackground(
   ctx.stroke();
 }
 
-/* -------------------------------------------------- */
-/* DECORATIVE SHAPES                                 */
-/* -------------------------------------------------- */
+/* ================================================== */
+/* STAR                                               */
+/* ================================================== */
 
 function drawStar(
   ctx: CanvasRenderingContext2D,
@@ -510,228 +508,116 @@ function drawStar(
   ctx.restore();
 }
 
-function drawSun(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  scale = 1
-) {
-  ctx.save();
-
-  ctx.translate(x, y);
-
-  ctx.scale(
-    scale,
-    scale
-  );
-
-  ctx.strokeStyle =
-    COLORS.mango;
-
-  ctx.lineWidth = 5;
-
-  for (
-    let i = 0;
-    i < 12;
-    i++
-  ) {
-    const a =
-      (Math.PI * 2 * i) / 12;
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-      Math.cos(a) * 40,
-      Math.sin(a) * 40
-    );
-
-    ctx.lineTo(
-      Math.cos(a) * 56,
-      Math.sin(a) * 56
-    );
-
-    ctx.stroke();
-  }
-
-  ctx.fillStyle =
-    COLORS.mango;
-
-  ctx.beginPath();
-
-  ctx.arc(
-    0,
-    0,
-    30,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-  ctx.restore();
-}
-
-/* -------------------------------------------------- */
-/* FLIGHT PATH                                       */
-/* -------------------------------------------------- */
-
-function drawFlightPath(
-  ctx: CanvasRenderingContext2D
-) {
-  ctx.save();
-
-  ctx.strokeStyle =
-    COLORS.coral;
-
-  ctx.globalAlpha = 0.4;
-
-  ctx.lineWidth = 2.5;
-
-  ctx.setLineDash([
-    3,
-    9
-  ]);
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    150,
-    155
-  );
-
-  ctx.quadraticCurveTo(
-    CARD_WIDTH / 2,
-    40,
-    CARD_WIDTH - 150,
-    155
-  );
-
-  ctx.stroke();
-
-  ctx.setLineDash([]);
-
-  ctx.restore();
-
-  ctx.save();
-
-  ctx.font =
-    '30px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-
-  ctx.textAlign =
-    'center';
-
-  ctx.textBaseline =
-    'middle';
-
-  ctx.translate(
-    CARD_WIDTH / 2,
-    70
-  );
-
-  ctx.rotate(0.25);
-
-  ctx.fillText(
-    '✈️',
-    0,
-    0
-  );
-
-  ctx.restore();
-}
-
-/* -------------------------------------------------- */
+/* ================================================== */
 /* HEADER                                             */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 function drawHeader(
   ctx: CanvasRenderingContext2D,
   hackerHouse: LoadedImage | null,
   goaLogo: LoadedImage | null
 ) {
-  const centerX =
-    CARD_WIDTH / 2;
+  const centerX = CARD_WIDTH / 2;
 
+  /*
+   * Top left
+   */
   text(
     ctx,
     'HH / GOA / 26',
     80,
     94,
-    17,
-    COLORS.teal,
+    19,
+    COLORS.tealDark,
     900
   );
 
+  /*
+   * Top right
+   */
   text(
     ctx,
     'OCT 28 — 31',
     CARD_WIDTH - 80,
     94,
-    17,
-    COLORS.teal,
+    21,
+    COLORS.tealDark,
     900,
     'right'
   );
 
+  /*
+   * Main Hacker House logo
+   */
   if (hackerHouse) {
     drawImageContain(
       ctx,
       hackerHouse,
-      centerX - 320,
-      115,
-      640,
-      145
+      centerX - 385,
+      102,
+      770,
+      170
     );
   } else {
     text(
       ctx,
-      'HACKER HOUSE',
+      'HACKER        HOUSE',
       centerX,
       220,
-      82,
-      COLORS.teal,
+      88,
+      COLORS.mango,
       900,
       'center'
     );
   }
 
+  /*
+   * GOA logo
+   * Exact center between HACKER and HOUSE.
+   */
   if (goaLogo) {
     drawImageContain(
       ctx,
       goaLogo,
-      centerX - 38,
-      158,
-      115,
-      70
+      centerX - 62,
+      142,
+      124,
+      88
     );
   }
 
+  /*
+   * Decorative stars
+   */
   drawStar(
     ctx,
-    centerX - 360,
+    centerX - 390,
     205,
-    14,
-    6,
+    17,
+    7,
     COLORS.mango,
     -10
   );
 
   drawStar(
     ctx,
-    centerX + 360,
+    centerX + 390,
     205,
-    14,
-    6,
+    17,
+    7,
     COLORS.coral,
     12
   );
 
+  /*
+   * Gold line
+   */
   ctx.strokeStyle =
     COLORS.mango;
 
-  ctx.lineWidth = 7;
+  ctx.lineWidth = 6;
 
-  ctx.lineCap =
-    'round';
+  ctx.lineCap = 'round';
 
   ctx.beginPath();
 
@@ -747,56 +633,199 @@ function drawHeader(
 
   ctx.stroke();
 
+  /*
+   * Main tagline
+   */
   text(
     ctx,
     'A BUILDER ID FOR THE PEOPLE WHO SHIP',
     centerX,
     318,
-    18,
-    COLORS.ink,
+    19,
+    COLORS.tealDark,
     900,
     'center'
   );
 
-  ctx.fillStyle =
-    COLORS.coral;
-
-  roundRect(
+  /*
+   * Wine ribbon
+   */
+  drawWineRibbon(
     ctx,
-    centerX - 125,
-    335,
-    250,
-    58,
-    29
-  );
-
-  ctx.fill();
-
-  text(
-    ctx,
-    'GOA · 2026',
     centerX,
-    373,
-    20,
-    COLORS.white,
-    900,
-    'center'
+    325
   );
 
+  /*
+   * Divider
+   */
   line(
     ctx,
     70,
     414,
     CARD_WIDTH - 70,
     414,
-    'rgba(14,76,67,0.30)',
+    'rgba(14,76,67,0.25)',
     2
   );
 }
 
-/* -------------------------------------------------- */
-/* PHOTO FRAME                                       */
-/* -------------------------------------------------- */
+/* ================================================== */
+/* WINE RIBBON                                        */
+/* ================================================== */
+
+function drawWineRibbon(
+  ctx: CanvasRenderingContext2D,
+  centerX: number,
+  y: number
+) {
+  const ribbonW = 340;
+  const ribbonH = 62;
+
+  const x =
+    centerX - ribbonW / 2;
+
+  /*
+   * Ribbon body
+   */
+  ctx.fillStyle =
+    COLORS.coral;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x + 25,
+    y
+  );
+
+  ctx.lineTo(
+    x + ribbonW - 25,
+    y
+  );
+
+  ctx.lineTo(
+    x + ribbonW - 45,
+    y + ribbonH
+  );
+
+  ctx.lineTo(
+    x + 45,
+    y + ribbonH
+  );
+
+  ctx.closePath();
+
+  ctx.fill();
+
+  /*
+   * Left rolled end
+   */
+  ctx.fillStyle =
+    '#D94459';
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    x + 28,
+    y + 8,
+    18,
+    12,
+    -0.25,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+  ctx.fillStyle =
+    COLORS.coral;
+
+  ctx.fillRect(
+    x + 13,
+    y + 5,
+    30,
+    ribbonH - 5
+  );
+
+  /*
+   * Right rolled end
+   */
+  ctx.fillStyle =
+    '#D94459';
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    x + ribbonW - 28,
+    y + 8,
+    18,
+    12,
+    0.25,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+  ctx.fillStyle =
+    COLORS.coral;
+
+  ctx.fillRect(
+    x + ribbonW - 43,
+    y + 5,
+    30,
+    ribbonH - 5
+  );
+
+  /*
+   * Ribbon outline
+   */
+  ctx.strokeStyle =
+    '#9E3040';
+
+  ctx.lineWidth = 3;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x + 25,
+    y
+  );
+
+  ctx.lineTo(
+    x + ribbonW - 25,
+    y
+  );
+
+  ctx.lineTo(
+    x + ribbonW - 45,
+    y + ribbonH
+  );
+
+  ctx.lineTo(
+    x + 45,
+    y + ribbonH
+  );
+
+  ctx.closePath();
+
+  ctx.stroke();
+
+  text(
+    ctx,
+    'WINE',
+    centerX,
+    y + 41,
+    28,
+    COLORS.white,
+    900,
+    'center'
+  );
+}
+
+/* ================================================== */
+/* PHOTO FRAME                                        */
+/* ================================================== */
 
 function drawPhotoFrame(
   ctx: CanvasRenderingContext2D,
@@ -805,19 +834,22 @@ function drawPhotoFrame(
   cy: number,
   r: number
 ) {
+  /*
+   * Outer soft coral ring
+   */
   ctx.save();
 
   ctx.strokeStyle =
-    'rgba(255,90,110,0.20)';
+    'rgba(255,90,110,0.18)';
 
-  ctx.lineWidth = 20;
+  ctx.lineWidth = 18;
 
   ctx.beginPath();
 
   ctx.arc(
     cx,
     cy,
-    r + 25,
+    r + 24,
     0,
     Math.PI * 2
   );
@@ -826,6 +858,9 @@ function drawPhotoFrame(
 
   ctx.restore();
 
+  /*
+   * Dashed coral ring
+   */
   ctx.save();
 
   ctx.strokeStyle =
@@ -843,7 +878,7 @@ function drawPhotoFrame(
   ctx.arc(
     cx,
     cy,
-    r + 22,
+    r + 21,
     0,
     Math.PI * 2
   );
@@ -852,6 +887,9 @@ function drawPhotoFrame(
 
   ctx.restore();
 
+  /*
+   * Gold ring
+   */
   ctx.strokeStyle =
     COLORS.mango;
 
@@ -862,13 +900,16 @@ function drawPhotoFrame(
   ctx.arc(
     cx,
     cy,
-    r + 10,
+    r + 9,
     0,
     Math.PI * 2
   );
 
   ctx.stroke();
 
+  /*
+   * Photo circle
+   */
   ctx.save();
 
   ctx.beginPath();
@@ -924,9 +965,9 @@ function drawPhotoFrame(
       ctx,
       'UPLOAD',
       cx,
-      cy - 4,
-      18,
-      COLORS.teal,
+      cy - 5,
+      23,
+      COLORS.tealDark,
       900,
       'center'
     );
@@ -935,8 +976,8 @@ function drawPhotoFrame(
       ctx,
       'YOUR PHOTO',
       cx,
-      cy + 30,
-      14,
+      cy + 35,
+      17,
       COLORS.muted,
       800,
       'center'
@@ -945,6 +986,9 @@ function drawPhotoFrame(
 
   ctx.restore();
 
+  /*
+   * Inner dark teal outline
+   */
   ctx.strokeStyle =
     COLORS.tealDark;
 
@@ -961,222 +1005,141 @@ function drawPhotoFrame(
   );
 
   ctx.stroke();
-
-  const badgeW = 170;
-  const badgeH = 58;
-
-  const bx =
-    cx + r - 15;
-
-  const by =
-    cy - r + 20;
-
-  ctx.fillStyle =
-    COLORS.tealDark;
-
-  roundRect(
-    ctx,
-    bx,
-    by,
-    badgeW,
-    badgeH,
-    14
-  );
-
-  ctx.fill();
-
-  text(
-    ctx,
-    'ACCESS',
-    bx + badgeW / 2,
-    by + 24,
-    12,
-    COLORS.mango,
-    900,
-    'center'
-  );
-
-  text(
-    ctx,
-    'GRANTED ✓',
-    bx + badgeW / 2,
-    by + 45,
-    13,
-    COLORS.white,
-    900,
-    'center'
-  );
-
-  const badge2W = 170;
-  const badge2H = 58;
-
-  const bx2 =
-    cx - r - badge2W + 15;
-
-  const by2 =
-    cy + r - 45;
-
-  ctx.fillStyle =
-    COLORS.coral;
-
-  roundRect(
-    ctx,
-    bx2,
-    by2,
-    badge2W,
-    badge2H,
-    14
-  );
-
-  ctx.fill();
-
-  text(
-    ctx,
-    'STATUS',
-    bx2 + badge2W / 2,
-    by2 + 24,
-    12,
-    COLORS.mango,
-    900,
-    'center'
-  );
-
-  text(
-    ctx,
-    'VERIFIED ✓',
-    bx2 + badge2W / 2,
-    by2 + 45,
-    13,
-    COLORS.white,
-    900,
-    'center'
-  );
 }
 
-/* -------------------------------------------------- */
-/* SMALL TAGLINES + BUILDER ICONS                     */
-/* -------------------------------------------------- */
+/* ================================================== */
+/* TAGS                                               */
+/* ================================================== */
+
+function drawTag(
+  ctx: CanvasRenderingContext2D,
+  label: string,
+  icon: string,
+  x: number,
+  y: number,
+  color: string
+) {
+  const w = 190;
+  const h = 56;
+
+  const left =
+    x - w / 2;
+
+  const top =
+    y - h / 2;
+
+  ctx.save();
+
+  /*
+   * Cream background
+   */
+  ctx.fillStyle =
+    'rgba(251,243,225,0.94)';
+
+  roundRect(
+    ctx,
+    left,
+    top,
+    w,
+    h,
+    28
+  );
+
+  ctx.fill();
+
+  /*
+   * Colored border
+   */
+  ctx.strokeStyle =
+    color;
+
+  ctx.lineWidth = 3;
+
+  roundRect(
+    ctx,
+    left,
+    top,
+    w,
+    h,
+    28
+  );
+
+  ctx.stroke();
+
+  /*
+   * Icon
+   */
+  text(
+    ctx,
+    icon,
+    left + 38,
+    top + 36,
+    21,
+    color,
+    900,
+    'center'
+  );
+
+  /*
+   * Label
+   */
+  text(
+    ctx,
+    label,
+    left + 112,
+    top + 36,
+    17,
+    COLORS.tealDark,
+    900,
+    'center'
+  );
+
+  ctx.restore();
+}
 
 function drawTaglinesAndIcons(
   ctx: CanvasRenderingContext2D
 ) {
-  const tags = [
-    {
-      label: '#CODER',
-      icon: '</>',
-      x: 105,
-      y: 535,
-      color: COLORS.tealDark,
-    },
-    {
-      label: '#TESTER',
-      icon: '✓',
-      x: 105,
-      y: 655,
-      color: COLORS.coral,
-    },
-    {
-      label: '#BUILDER',
-      icon: '⚡',
-      x: 975,
-      y: 535,
-      color: COLORS.tealDark,
-    },
-    {
-      label: '#CREATOR',
-      icon: '✦',
-      x: 975,
-      y: 655,
-      color: COLORS.coral,
-    },
-  ];
+  drawTag(
+    ctx,
+    '#CODER',
+    '</>',
+    155,
+    555,
+    COLORS.tealDark
+  );
 
-  tags.forEach((tag) => {
-    ctx.save();
+  drawTag(
+    ctx,
+    '#TESTER',
+    '✓',
+    155,
+    720, // moved down
+    COLORS.coral
+  );
 
-    /*
-     * Larger rounded tag frame
-     */
-    const tagW = 155;
-    const tagH = 48;
+  drawTag(
+    ctx,
+    '#BUILDER',
+    '⚡',
+    CARD_WIDTH - 155,
+    555,
+    COLORS.tealDark
+  );
 
-    const tagX =
-      tag.x - tagW / 2;
-
-    const tagY =
-      tag.y - tagH / 2;
-
-    /*
-     * Soft background
-     */
-    ctx.fillStyle =
-      'rgba(251,243,225,0.94)';
-
-    roundRect(
-      ctx,
-      tagX,
-      tagY,
-      tagW,
-      tagH,
-      24
-    );
-
-    ctx.fill();
-
-    /*
-     * Strong frame
-     */
-    ctx.strokeStyle =
-      tag.color;
-
-    ctx.lineWidth = 3;
-
-    roundRect(
-      ctx,
-      tagX,
-      tagY,
-      tagW,
-      tagH,
-      24
-    );
-
-    ctx.stroke();
-
-    /*
-     * Icon
-     */
-    text(
-      ctx,
-      tag.icon,
-      tagX + 27,
-      tagY + 32,
-      18,
-      tag.color,
-      900,
-      'center'
-    );
-
-    /*
-     * Tagline
-     */
-    text(
-      ctx,
-      tag.label,
-      tagX + 88,
-      tagY + 31,
-      14,
-      COLORS.tealDark,
-      900,
-      'center'
-    );
-
-    ctx.restore();
-  });
+  drawTag(
+    ctx,
+    '#CREATOR',
+    '✦',
+    CARD_WIDTH - 155,
+    720, // moved down
+    COLORS.coral
+  );
 }
 
-/* -------------------------------------------------- */
+/* ================================================== */
 /* IDENTITY                                           */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 function drawIdentity(
   ctx: CanvasRenderingContext2D,
@@ -1187,11 +1150,10 @@ function drawIdentity(
     CARD_WIDTH / 2;
 
   /*
-   * BUILDER label removed.
    * Name starts directly below photo.
    */
-  const y =
-    photoBottomY + 42;
+  const nameY =
+    photoBottomY + 38;
 
   const name =
     (
@@ -1199,15 +1161,15 @@ function drawIdentity(
       'YOUR NAME'
     ).toUpperCase();
 
-  let nameSize = 82;
+  let nameSize = 70;
 
   ctx.font =
     `900 ${nameSize}px "Poppins", Arial, sans-serif`;
 
   while (
     ctx.measureText(name).width >
-      720 &&
-    nameSize > 44
+      600 &&
+    nameSize > 42
   ) {
     nameSize -= 2;
 
@@ -1217,19 +1179,19 @@ function drawIdentity(
 
   const nameWidth =
     Math.min(
-      ctx.measureText(name).width + 100,
-      820
+      ctx.measureText(name).width + 75,
+      680
     );
 
-  const nameHeight = 96;
+  const nameHeight = 84;
 
   const nameX =
     centerX -
     nameWidth / 2;
 
-  const nameY =
-    y;
-
+  /*
+   * Name frame
+   */
   ctx.fillStyle =
     COLORS.tealDark;
 
@@ -1239,21 +1201,7 @@ function drawIdentity(
     nameY,
     nameWidth,
     nameHeight,
-    28
-  );
-
-  ctx.fill();
-
-  ctx.fillStyle =
-    COLORS.coral;
-
-  roundRect(
-    ctx,
-    nameX + 22,
-    nameY - 7,
-    100,
-    10,
-    5
+    24
   );
 
   ctx.fill();
@@ -1262,42 +1210,49 @@ function drawIdentity(
     ctx,
     name,
     centerX,
-    nameY + 67,
+    nameY + 58,
     nameSize,
     COLORS.white,
     900,
     'center'
   );
 
-  const roleY =
-    nameY +
-    nameHeight +
-    48;
-
+  /*
+   * Builder role
+   */
   const role =
     (
       data.role ||
       'BUILDER'
     ).toUpperCase();
 
+  const roleY =
+    nameY +
+    nameHeight +
+    42;
+
   ctx.font =
-    '800 26px "Poppins", Arial, sans-serif';
+    '900 22px "Poppins", Arial, sans-serif';
 
   const roleWidth =
-    ctx.measureText(role).width +
-    72;
+    Math.max(
+      145,
+      ctx.measureText(role).width + 55
+    );
 
+  /*
+   * Small gold pill
+   */
   ctx.fillStyle =
     COLORS.mango;
 
   roundRect(
     ctx,
-    centerX -
-      roleWidth / 2,
-    roleY - 34,
+    centerX - roleWidth / 2,
+    roleY - 27,
     roleWidth,
-    52,
-    26
+    48,
+    24
   );
 
   ctx.fill();
@@ -1306,19 +1261,42 @@ function drawIdentity(
     ctx,
     role,
     centerX,
-    roleY,
-    25,
+    roleY + 5,
+    21,
     COLORS.ink,
     900,
     'center'
   );
 
-  return roleY + 30;
+  /*
+   * Small decorative lines
+   */
+  line(
+    ctx,
+    centerX - 210,
+    roleY - 3,
+    centerX - roleWidth / 2 - 18,
+    roleY - 3,
+    COLORS.tealDark,
+    2
+  );
+
+  line(
+    ctx,
+    centerX + roleWidth / 2 + 18,
+    roleY - 3,
+    centerX + 210,
+    roleY - 3,
+    COLORS.tealDark,
+    2
+  );
+
+  return roleY + 26;
 }
 
-/* -------------------------------------------------- */
+/* ================================================== */
 /* BUILDER CLASS                                      */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 function drawBuilderClass(
   ctx: CanvasRenderingContext2D,
@@ -1328,10 +1306,18 @@ function drawBuilderClass(
   const centerX =
     CARD_WIDTH / 2;
 
-  const x = 250;
-  const w = CARD_WIDTH - 500;
-  const h = 145;
+  /*
+   * Smaller frame
+   */
+  const w = 430;
+  const h = 135;
 
+  const x =
+    centerX - w / 2;
+
+  /*
+   * Main frame
+   */
   ctx.fillStyle =
     COLORS.tealDark;
 
@@ -1341,67 +1327,49 @@ function drawBuilderClass(
     y,
     w,
     h,
-    26
+    24
   );
 
   ctx.fill();
 
-  ctx.fillStyle =
-    COLORS.coral;
+  /*
+   * Pink strip removed.
+   */
 
-  roundRect(
-    ctx,
-    x + 20,
-    y + 20,
-    8,
-    105,
-    4
-  );
-
-  ctx.fill();
-
-  ctx.fillStyle =
-    COLORS.mango;
-
-  roundRect(
-    ctx,
-    centerX - 65,
-    y,
-    130,
-    8,
-    4
-  );
-
-  ctx.fill();
-
+  /*
+   * Builder class label
+   */
   text(
     ctx,
     'BUILDER CLASS',
     centerX,
-    y + 38,
-    16,
+    y + 30,
+    13,
     COLORS.mango,
     900,
     'center'
   );
 
+  /*
+   * Builder title
+   */
   const title =
     (
       data.builderTitle ||
       'THE BUILDER'
     ).toUpperCase();
 
-  let size = 48;
+  let size = 40;
 
   ctx.font =
     `900 ${size}px "Poppins", Arial, sans-serif`;
 
   while (
     ctx.measureText(title).width >
-      w - 90 &&
-    size > 26
+      w - 65 &&
+    size > 25
   ) {
-    size -= 2;
+    size -= 1;
 
     ctx.font =
       `900 ${size}px "Poppins", Arial, sans-serif`;
@@ -1411,17 +1379,20 @@ function drawBuilderClass(
     ctx,
     title,
     centerX,
-    y + 88,
+    y + 74,
     size,
     COLORS.white,
     900,
     'center'
   );
 
+  /*
+   * Bottom pills
+   */
   const tags = [
     {
       label: 'BUILD',
-      color: COLORS.teal,
+      color: COLORS.aqua,
     },
     {
       label: 'SHIP',
@@ -1429,299 +1400,58 @@ function drawBuilderClass(
     },
     {
       label: 'CREATE',
-      color: COLORS.aqua,
+      color: '#54B6A5',
     },
   ];
 
-  ctx.font =
-    '800 12px "Poppins", Arial, sans-serif';
+  const pillW = 95;
+  const pillH = 30;
+  const gap = 15;
 
-  const tagWidths =
-    tags.map(
-      (tag) =>
-        ctx.measureText(
-          tag.label
-        ).width + 28
-    );
-
-  const tagsTotalWidth =
-    tagWidths.reduce(
-      (a, b) => a + b,
-      0
-    ) + 20;
+  const totalW =
+    pillW * 3 +
+    gap * 2;
 
   let tx =
     centerX -
-    tagsTotalWidth / 2;
+    totalW / 2;
 
-  tags.forEach(
-    (tag, i) => {
-      const tw =
-        tagWidths[i];
+  tags.forEach((tag) => {
+    ctx.fillStyle =
+      tag.color;
 
-      ctx.fillStyle =
-        tag.color;
+    roundRect(
+      ctx,
+      tx,
+      y + 92,
+      pillW,
+      pillH,
+      15
+    );
 
-      roundRect(
-        ctx,
-        tx,
-        y + 108,
-        tw,
-        27,
-        13
-      );
+    ctx.fill();
 
-      ctx.fill();
+    text(
+      ctx,
+      tag.label,
+      tx + pillW / 2,
+      y + 113,
+      12,
+      COLORS.white,
+      900,
+      'center'
+    );
 
-      text(
-        ctx,
-        tag.label,
-        tx + tw / 2,
-        y + 127,
-        12,
-        COLORS.white,
-        900,
-        'center'
-      );
-
-      tx +=
-        tw + 10;
-    }
-  );
+    tx +=
+      pillW + gap;
+  });
 
   return y + h;
 }
 
-/* -------------------------------------------------- */
-/* DECORATIVE BUILDER ICONS                           */
-/* -------------------------------------------------- */
-
-function drawBuilderBackgroundIcons(
-  ctx: CanvasRenderingContext2D,
-  y: number
-) {
-  ctx.save();
-
-  ctx.globalAlpha =
-    0.14;
-
-  const icons = [
-    {
-      icon: '</>',
-      x: 125,
-      y: y + 45,
-      size: 52,
-      rotation: -0.10,
-    },
-    {
-      icon: '{}',
-      x: 190,
-      y: y + 105,
-      size: 34,
-      rotation: -0.08,
-    },
-    {
-      icon: '⚡',
-      x: 925,
-      y: y + 45,
-      size: 54,
-      rotation: 0.08,
-    },
-    {
-      icon: '01',
-      x: 975,
-      y: y + 105,
-      size: 32,
-      rotation: 0,
-    },
-    {
-      icon: '↗',
-      x: 135,
-      y: y + 165,
-      size: 42,
-      rotation: -0.08,
-    },
-    {
-      icon: '⌘',
-      x: 940,
-      y: y + 175,
-      size: 44,
-      rotation: 0.08,
-    },
-  ];
-
-  icons.forEach(
-    (item) => {
-      ctx.save();
-
-      ctx.translate(
-        item.x,
-        item.y
-      );
-
-      ctx.rotate(
-        item.rotation
-      );
-
-      ctx.font =
-        `900 ${item.size}px "Poppins", Arial, sans-serif`;
-
-      ctx.textAlign =
-        'center';
-
-      ctx.textBaseline =
-        'middle';
-
-      ctx.fillStyle =
-        COLORS.teal;
-
-      ctx.fillText(
-        item.icon,
-        0,
-        0
-      );
-
-      ctx.restore();
-    }
-  );
-
-  ctx.restore();
-}
-
-/* -------------------------------------------------- */
-/* INDIA GATE                                         */
-/* -------------------------------------------------- */
-
-function drawIndiaGateBackground(
-  ctx: CanvasRenderingContext2D,
-  image: LoadedImage | null,
-  y: number
-) {
-  if (!image) return;
-
-  const centerX =
-    CARD_WIDTH / 2;
-
-  ctx.save();
-
-  ctx.globalAlpha = 0.30;
-
-  ctx.filter =
-    'blur(0.5px)';
-
-  drawImageContain(
-    ctx,
-    image,
-    centerX - 235,
-    y - 15,
-    470,
-    190
-  );
-
-  ctx.restore();
-
-  ctx.save();
-
-  const fade =
-    ctx.createLinearGradient(
-      0,
-      y - 15,
-      0,
-      y + 175
-    );
-
-  fade.addColorStop(
-    0,
-    'rgba(251,243,225,0.25)'
-  );
-
-  fade.addColorStop(
-    0.5,
-    'rgba(251,243,225,0)'
-  );
-
-  fade.addColorStop(
-    1,
-    'rgba(251,243,225,0.30)'
-  );
-
-  ctx.fillStyle =
-    fade;
-
-  ctx.fillRect(
-    centerX - 245,
-    y - 20,
-    490,
-    210
-  );
-
-  ctx.restore();
-}
-
-/* -------------------------------------------------- */
-/* GOA STRIP                                          */
-/* -------------------------------------------------- */
-
-function drawGoaStrip(
-  ctx: CanvasRenderingContext2D,
-  y: number
-) {
-  line(
-    ctx,
-    250,
-    y,
-    CARD_WIDTH - 250,
-    y,
-    'rgba(14,76,67,0.25)',
-    2
-  );
-
-  drawSun(
-    ctx,
-    300,
-    y + 48,
-    0.4
-  );
-
-  text(
-    ctx,
-    'GOA',
-    300,
-    y + 88,
-    14,
-    COLORS.tealDark,
-    900,
-    'center'
-  );
-
-  text(
-    ctx,
-    'BUILD · SHIP · REPEAT',
-    540,
-    y + 70,
-    16,
-    COLORS.teal,
-    900,
-    'center'
-  );
-
-  text(
-    ctx,
-    '28—31 OCT 2026',
-    780,
-    y + 70,
-    15,
-    COLORS.tealDark,
-    900,
-    'center'
-  );
-
-  return y + 105;
-}
-
-/* -------------------------------------------------- */
+/* ================================================== */
 /* BARCODE                                            */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 function drawBarcode(
   ctx: CanvasRenderingContext2D,
@@ -1752,8 +1482,7 @@ function drawBarcode(
         1013904223
       ) >>> 0;
 
-    return s /
-      0xffffffff;
+    return s / 0xffffffff;
   };
 
   ctx.fillStyle =
@@ -1787,9 +1516,9 @@ function drawBarcode(
   }
 }
 
-/* -------------------------------------------------- */
+/* ================================================== */
 /* FOOTER                                             */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 async function drawFooter(
   ctx: CanvasRenderingContext2D,
@@ -1797,8 +1526,18 @@ async function drawFooter(
   hackerHouse: LoadedImage | null,
   pm247: LoadedImage | null
 ) {
+  /*
+   * Footer
+   * Completely inside card.
+   */
+  const footerH = 225;
   const footerY =
-    CARD_HEIGHT - 190;
+    CARD_HEIGHT - footerH;
+
+  /*
+   * Dark teal footer background
+   */
+  ctx.save();
 
   ctx.fillStyle =
     COLORS.tealDark;
@@ -1807,22 +1546,20 @@ async function drawFooter(
 
   ctx.moveTo(
     0,
-    footerY + 35
+    footerY + 38
   );
 
   for (
     let x = 0;
     x <= CARD_WIDTH;
-    x += 35
+    x += 30
   ) {
     const wave =
-      Math.sin(x / 55) * 18;
+      Math.sin(x / 55) * 16;
 
     ctx.lineTo(
       x,
-      footerY +
-        35 +
-        wave
+      footerY + 38 + wave
     );
   }
 
@@ -1840,22 +1577,27 @@ async function drawFooter(
 
   ctx.fill();
 
+  ctx.restore();
+
+  /*
+   * Left section
+   */
   if (hackerHouse) {
     drawImageContain(
       ctx,
       hackerHouse,
-      55,
-      footerY + 52,
-      235,
+      45,
+      footerY + 48,
+      245,
       72
     );
   } else {
     text(
       ctx,
-      'HACKER HOUSE GOA',
-      70,
-      footerY + 76,
-      17,
+      'HACKER HOUSE',
+      55,
+      footerY + 92,
+      28,
       COLORS.white,
       900
     );
@@ -1864,9 +1606,9 @@ async function drawFooter(
   text(
     ctx,
     '#FrameInGoa',
-    70,
-    footerY + 135,
-    14,
+    58,
+    footerY + 140,
+    15,
     COLORS.mango,
     800
   );
@@ -1874,83 +1616,29 @@ async function drawFooter(
   text(
     ctx,
     'hhgoa.com',
-    70,
-    footerY + 160,
-    12,
-    'rgba(255,255,255,0.70)',
+    58,
+    footerY + 168,
+    13,
+    COLORS.white,
     600
   );
 
-  if (pm247) {
-    drawImageContain(
-      ctx,
-      pm247,
-      360,
-      footerY + 50,
-      190,
-      105
-    );
-  } else {
-    text(
-      ctx,
-      '2:47 PM',
-      400,
-      footerY + 104,
-      15,
-      COLORS.white,
-      800
-    );
-
-    text(
-      ctx,
-      'STUDIO',
-      400,
-      footerY + 130,
-      13,
-      'rgba(255,255,255,0.72)',
-      700
-    );
-  }
-
-  text(
+  /*
+   * Left separator
+   */
+  line(
     ctx,
-    '28–31 OCTOBER',
-    570,
-    footerY + 76,
-    15,
-    COLORS.mango,
-    900
+    330,
+    footerY + 48,
+    330,
+    CARD_HEIGHT - 28,
+    'rgba(255,255,255,0.35)',
+    2
   );
 
-  text(
-    ctx,
-    'BUILDER ID',
-    570,
-    footerY + 104,
-    12,
-    'rgba(255,255,255,0.65)',
-    800
-  );
-
-  text(
-    ctx,
-    builderId,
-    570,
-    footerY + 128,
-    18,
-    COLORS.white,
-    900
-  );
-
-  drawBarcode(
-    ctx,
-    builderId,
-    570,
-    footerY + 140,
-    170,
-    20
-  );
-
+  /*
+   * Center QR code
+   */
   try {
     const qrDataUrl =
       await QRCode.toDataURL(
@@ -1961,54 +1649,200 @@ async function drawFooter(
             dark: COLORS.tealDark,
             light: '#FBF3E100',
           },
-          width: 220,
+          width: 300,
         }
       );
 
     const qrImg =
-      await loadImage(
-        qrDataUrl
-      );
+      await loadImage(qrDataUrl);
 
-    const size = 95;
+    const qrSize = 135;
 
-    const qx =
-      CARD_WIDTH -
-      80 -
-      size;
+    const qrX =
+      CARD_WIDTH / 2 -
+      qrSize / 2;
 
-    const qy =
-      footerY + 62;
+    const qrY =
+      footerY + 55;
 
+    /*
+     * White QR card
+     */
     ctx.fillStyle =
       COLORS.white;
 
     roundRect(
       ctx,
-      qx - 8,
-      qy - 8,
-      size + 16,
-      size + 16,
-      10
+      qrX - 12,
+      qrY - 12,
+      qrSize + 24,
+      qrSize + 24,
+      18
     );
 
     ctx.fill();
 
+    /*
+     * Gold QR border
+     */
+    ctx.strokeStyle =
+      COLORS.mango;
+
+    ctx.lineWidth = 4;
+
+    roundRect(
+      ctx,
+      qrX - 12,
+      qrY - 12,
+      qrSize + 24,
+      qrSize + 24,
+      18
+    );
+
+    ctx.stroke();
+
+    /*
+     * QR
+     */
     ctx.drawImage(
       qrImg,
-      qx,
-      qy,
-      size,
-      size
+      qrX,
+      qrY,
+      qrSize,
+      qrSize
     );
   } catch {
-    // ignored
+    // Ignore QR generation errors
   }
+
+  /*
+   * Right separator
+   */
+  line(
+    ctx,
+    750,
+    footerY + 48,
+    750,
+    CARD_HEIGHT - 28,
+    'rgba(255,255,255,0.35)',
+    2
+  );
+
+  /*
+   * Right section
+   */
+  const rightX = 800;
+
+  /*
+   * Hosted by
+   */
+  text(
+    ctx,
+    'HOSTED BY',
+    rightX,
+    footerY + 62,
+    12,
+    COLORS.white,
+    800,
+    'left'
+  );
+
+  /*
+   * 2:47 PM STUDIO
+   */
+  if (pm247) {
+    drawImageContain(
+      ctx,
+      pm247,
+      rightX - 5,
+      footerY + 68,
+      165,
+      58
+    );
+  } else {
+    text(
+      ctx,
+      '2:47',
+      rightX,
+      footerY + 105,
+      34,
+      COLORS.mango,
+      900
+    );
+
+    text(
+      ctx,
+      'PM',
+      rightX + 88,
+      footerY + 104,
+      13,
+      COLORS.mango,
+      900
+    );
+
+    text(
+      ctx,
+      'STUDIO',
+      rightX,
+      footerY + 133,
+      18,
+      COLORS.mango,
+      900
+    );
+  }
+
+  /*
+   * Builder ID
+   */
+  text(
+    ctx,
+    'BUILDER ID',
+    rightX,
+    footerY + 158,
+    11,
+    'rgba(255,255,255,0.75)',
+    800
+  );
+
+  text(
+    ctx,
+    builderId,
+    rightX,
+    footerY + 180,
+    18,
+    COLORS.white,
+    900
+  );
+
+  /*
+   * Barcode
+   */
+  drawBarcode(
+    ctx,
+    builderId,
+    rightX,
+    footerY + 188,
+    175,
+    14
+  );
+
+  /*
+   * Safety line
+   */
+  line(
+    ctx,
+    45,
+    CARD_HEIGHT - 22,
+    CARD_WIDTH - 45,
+    CARD_HEIGHT - 22,
+    'rgba(255,255,255,0.10)',
+    2
+  );
 }
 
-/* -------------------------------------------------- */
+/* ================================================== */
 /* VIGNETTE                                           */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 function drawVignette(
   ctx: CanvasRenderingContext2D
@@ -2030,7 +1864,7 @@ function drawVignette(
 
   gradient.addColorStop(
     1,
-    'rgba(6,53,47,0.10)'
+    'rgba(6,53,47,0.08)'
   );
 
   ctx.save();
@@ -2048,9 +1882,9 @@ function drawVignette(
   ctx.restore();
 }
 
-/* -------------------------------------------------- */
+/* ================================================== */
 /* FONT LOADER                                        */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 export async function ensureFontsReady() {
   if (
@@ -2085,9 +1919,9 @@ export async function ensureFontsReady() {
   }
 }
 
-/* -------------------------------------------------- */
+/* ================================================== */
 /* MAIN CARD DRAW                                     */
-/* -------------------------------------------------- */
+/* ================================================== */
 
 export async function drawBuilderCard(
   canvas: HTMLCanvasElement,
@@ -2100,9 +1934,7 @@ export async function drawBuilderCard(
     CARD_HEIGHT;
 
   const ctx =
-    canvas.getContext(
-      '2d'
-    );
+    canvas.getContext('2d');
 
   if (!ctx) {
     return;
@@ -2123,22 +1955,14 @@ export async function drawBuilderCard(
   /*
    * 1. BACKGROUND
    */
-
   drawBackground(
     ctx,
     assets.background
   );
 
   /*
-   * 2. FLIGHT PATH
+   * 2. HEADER
    */
-
-  drawFlightPath(ctx);
-
-  /*
-   * 3. HEADER
-   */
-
   drawHeader(
     ctx,
     assets.hackerHouse,
@@ -2146,10 +1970,9 @@ export async function drawBuilderCard(
   );
 
   /*
-   * 4. PHOTO
+   * 3. PHOTO
    */
-
-  const photoCy = 625;
+  const photoCy = 640;
   const photoR = 215;
 
   drawPhotoFrame(
@@ -2161,15 +1984,13 @@ export async function drawBuilderCard(
   );
 
   /*
-   * 4.5 TAGLINES
+   * 4. TAGS
    */
-
   drawTaglinesAndIcons(ctx);
 
   /*
-   * 5. IDENTITY
+   * 5. NAME + ROLE
    */
-
   const identityBottom =
     drawIdentity(
       ctx,
@@ -2180,46 +2001,19 @@ export async function drawBuilderCard(
   /*
    * 6. BUILDER CLASS
    */
-
-  const classBottom =
-    drawBuilderClass(
-      ctx,
-      data,
-      identityBottom + 18
-    );
-
-  /*
-   * 7. DECORATIVE ICONS
-   */
-
-  drawBuilderBackgroundIcons(
+  drawBuilderClass(
     ctx,
-    classBottom + 5
+    data,
+    identityBottom + 18
   );
 
   /*
-   * 8. INDIA GATE
+   * GOA STRIP REMOVED
    */
-
-  drawIndiaGateBackground(
-    ctx,
-    assets.indiaGate,
-    classBottom + 22
-  );
 
   /*
-   * 9. GOA STRIP
+   * 7. FOOTER
    */
-
-  drawGoaStrip(
-    ctx,
-    classBottom + 205
-  );
-
-  /*
-   * 10. FOOTER
-   */
-
   await drawFooter(
     ctx,
     data.builderId,
@@ -2228,19 +2022,17 @@ export async function drawBuilderCard(
   );
 
   /*
-   * 11. VIGNETTE
+   * 8. VIGNETTE
    */
-
   drawVignette(ctx);
 
   /*
-   * 12. FINAL BORDER
+   * 9. FINAL BORDER
    */
-
   ctx.strokeStyle =
     COLORS.teal;
 
-  ctx.lineWidth = 7;
+  ctx.lineWidth = 8;
 
   roundRect(
     ctx,

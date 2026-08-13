@@ -57,6 +57,8 @@ export function builderTitle(seed: string, role: string, spin = 0): string {
 }
 
 export function randomBuilderId(): string {
-  const n = Math.floor(1000 + Math.random() * 9000);
-  return `#HH-GOA-${n}`;
+  return `#HH${crypto.randomUUID()
+    .replace(/-/g, '')
+    .substring(0, 5)
+    .toUpperCase()}`;
 }
